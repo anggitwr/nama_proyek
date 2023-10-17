@@ -51,19 +51,18 @@ class siswaController extends Controller
             'nama' => $request -> nama,
            
         ];
-        // $textTele = [
-        //     'created_at' => $_GET,
-           
-        // ];
         
         
         siswa::create($data);
         $currentTime = now()->toDateTimeString(); 
 
+        $messageText = "Data baru dibuat pada " . $currentTime . "\n\n";
+        $messageText .= "ID: " . $data['id'] . "\n";
+        $messageText .= "Nama: " . $data['nama'];
         Telegram::sendMessage([
             "chat_id"=>env('TELEGRAM_CHAT_ID', ''),
             "parse_mode"=>"HTML",
-            "text"=>'new created at  '. $currentTime
+            "text"=>$messageText
         ]);
         return redirect()->to('siswa')->with('success', 'data berhasil ditambahkan');
         
@@ -114,11 +113,12 @@ class siswaController extends Controller
         ];
         siswa::where('id',$id)->update($data);
         $currentTime = now()->toDateTimeString(); 
-
+        $messageText = "Data diedit pada " . $currentTime . "\n\n";
+        $messageText .= "Nama: " . $data['nama'];
         Telegram::sendMessage([
             "chat_id"=>env('TELEGRAM_CHAT_ID', ''),
             "parse_mode"=>"HTML",
-            "text"=>'new update at  '. $currentTime
+            "text"=>$messageText
         ]);
         return redirect()->to('siswa')->with('success', 'data berhasil diupdate');
     }
