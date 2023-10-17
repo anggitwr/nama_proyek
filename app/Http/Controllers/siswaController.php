@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Telegram;
 
 class siswaController extends Controller
 {
@@ -48,9 +49,32 @@ class siswaController extends Controller
         $data = [
             'id' => $request -> id,
             'nama' => $request -> nama,
+           
         ];
+        // $textTele = [
+        //     'created_at' => $_GET,
+           
+        // ];
+        
+        
         siswa::create($data);
+        $currentTime = now()->toDateTimeString(); 
+
+        Telegram::sendMessage([
+            "chat_id"=>env('TELEGRAM_CHAT_ID', ''),
+            "parse_mode"=>"HTML",
+            "text"=>'new created at  '. $currentTime
+        ]);
         return redirect()->to('siswa')->with('success', 'data berhasil ditambahkan');
+        
+       
+    }
+
+    public function teleUpdates(){
+        $updates = Telegram::getUpdates();
+
+        dd($updates);
+
     }
 
     /**
@@ -89,6 +113,13 @@ class siswaController extends Controller
             'nama' => $request -> nama,
         ];
         siswa::where('id',$id)->update($data);
+        $currentTime = now()->toDateTimeString(); 
+
+        Telegram::sendMessage([
+            "chat_id"=>env('TELEGRAM_CHAT_ID', ''),
+            "parse_mode"=>"HTML",
+            "text"=>'new update at  '. $currentTime
+        ]);
         return redirect()->to('siswa')->with('success', 'data berhasil diupdate');
     }
 

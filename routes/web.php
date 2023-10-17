@@ -19,3 +19,5 @@ Route::get('/', function () {
 });
 
 Route::resource('siswa', siswaController::class);
+
+Route::get('/bot/getUpdates', 'App\Http\Controllers\siswaController@teleUpdates');
