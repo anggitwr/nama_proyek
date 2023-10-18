@@ -6,6 +6,8 @@ use App\Models\siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Telegram;
+use Carbon\Carbon;
+
 
 class siswaController extends Controller
 {
@@ -47,22 +49,22 @@ class siswaController extends Controller
         ]);
 
         $data = [
-            'id' => $request -> id,
-            'nama' => $request -> nama,
-           
+            'id' => $request->id,
+            'nama' => $request->nama,
         ];
         
-        
         siswa::create($data);
-        $currentTime = now()->toDateTimeString(); 
-
-        $messageText = "Data baru dibuat pada " . $currentTime . "\n\n";
+        
+        $currentTime = Carbon::now()->diffForHumans();
+      
+        $messageText = "Data baru dibuat " . $currentTime . "\n\n"; 
         $messageText .= "ID: " . $data['id'] . "\n";
         $messageText .= "Nama: " . $data['nama'];
+        
         Telegram::sendMessage([
-            "chat_id"=>env('TELEGRAM_CHAT_ID', ''),
-            "parse_mode"=>"HTML",
-            "text"=>$messageText
+            "chat_id" => env('TELEGRAM_CHAT_ID', ''),
+            "parse_mode" => "HTML",
+            "text" => $messageText
         ]);
         return redirect()->to('siswa')->with('success', 'data berhasil ditambahkan');
         
@@ -112,7 +114,9 @@ class siswaController extends Controller
             'nama' => $request -> nama,
         ];
         siswa::where('id',$id)->update($data);
-        $currentTime = now()->toDateTimeString(); 
+
+        $currentTime = Carbon::now()->diffForHumans();
+
         $messageText = "Data diedit pada " . $currentTime . "\n\n";
         $messageText .= "Nama: " . $data['nama'];
         Telegram::sendMessage([
